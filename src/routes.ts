@@ -7,10 +7,14 @@ import authMiddleware from './middlewares/auth';
 
 const routes = Router();
 
-routes.get('/users', UserController.index);
+// routes.get('/users', UserController.index);
 routes.post('/users', UserController.store);
 
-routes.post('/authenticate', AuthenticateController.store);
+routes.post('/authenticate', AuthenticateController.auth);
+
+routes.post('/forgotPassword', AuthenticateController.forgotPassword);
+
+routes.post('/resetPassword', AuthenticateController.resetPassword);
 
 routes.get('/projects', authMiddleware, ProjectController.index);
 

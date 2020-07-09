@@ -24,7 +24,8 @@ class App {
     mongoose.connect('mongodb://localhost:27017/node-apirest-typescript', {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      useCreateIndex: true
+      useCreateIndex: true,
+      useFindAndModify: false
     });
   }
 

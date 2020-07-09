@@ -4,15 +4,15 @@ import User from '../models/User';
 import { generateToken } from '../utils/generateToken';
 
 class UserController {
-  public async index(req: Request, res: Response): Promise<Response> {
-    try {
-      const users = await User.find();
+  // public async index(req: Request, res: Response): Promise<Response> {
+  //   try {
+  //     const users = await User.find();
 
-      return res.json(users);
-    } catch (err) {
-      return res.status(400).json({ Mensagge: 'Get Failed', Error: err });
-    }
-  }
+  //     return res.json(users);
+  //   } catch (err) {
+  //     return res.status(400).json({ Mensagge: 'Get Failed', Error: err });
+  //   }
+  // }
 
   public async store(req: Request, res: Response): Promise<Response> {
     const { email } = req.body;

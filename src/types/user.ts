@@ -4,5 +4,7 @@ export interface IUser extends Document {
   name?: string;
   email?: string;
   password?: string;
-  createAt?: string;
+  passwordResetToken?: string;
+  passwordResetExpires?: Date;
+  createAt?: Date;
 }
