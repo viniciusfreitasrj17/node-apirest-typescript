@@ -1,48 +1,105 @@
 import { Request, Response } from 'express';
-// import bycript from 'bcryptjs';
 
-// import User from '../models/User';
-// import { generateToken } from '../utils/generateToken';
-// import authMiddleware from '../middlewares/auth';
-import { TReq } from '../types/auth';
+import { TReq } from '../types/user';
+import { ITask } from '../types/task';
+import Project from '../models/Project';
+import Task from '../models/Task';
 
 class ProjectController {
   public async index(req: Request & TReq, res: Response): Promise<Response> {
     try {
-      // const users = await User.find();
+      const projects = await Project.find().populate(['user', 'tasks']);
 
-      return res.json({ ok: true, user: req.userId });
+      return res.json({ projects });
     } catch (err) {
-      return res.status(400).json({ Mensagge: 'Project Failed', Error: err });
+      return res.status(400).json({ Mensagge: 'Project Index Failed' });
     }
   }
 
-  // public async store(req: Request, res: Response): Promise<Response> {
-  //   const { email, password } = req.body;
+  public async show(req: Request & TReq, res: Response): Promise<Response> {
+    try {
+      const project = await Project.findById(req.params.projectId).populate([
+        'user',
+        'tasks'
+      ]);
 
-  //   try {
-  //     const user = await User.findOne({ email }).select('+password');
+      return res.json({ project });
+    } catch (err) {
+      return res.status(400).json({ Mensagge: 'Project Show Failed' });
+    }
+  }
 
-  //     if (!user) {
-  //       return res.status(400).json({ Error: 'User not found' });
-  //     }
+  public async store(req: Request & TReq, res: Response): Promise<Response> {
+    try {
+      const { title, description, tasks } = req.body;
 
-  //     if (!(await bycript.compare(password, user.password))) {
-  //       return res.status(400).json({ Error: 'Invalid Password' });
-  //     }
+      const project = await Project.create({
+        title,
+        description,
+        user: req.userId as string
+      });
 
-  //     user.password = undefined;
+      await Promise.all(
+        tasks.map(async (task: ITask) => {
+          const projectTask = new Task({ ...task, project: project._id }); // or Task.create({...})
 
-  //     return res.json({
-  //       user,
-  //       token: generateToken({ id: user.id })
-  //     });
-  //   } catch (err) {
-  //     return res
-  //       .status(400)
-  //       .json({ Mensagge: 'Authenticate Failed', Error: err });
-  //   }
-  // }
+          await projectTask.save();
+
+          project.tasks.push(projectTask);
+        })
+      );
+
+      await project.save();
+
+      return res.json({ project });
+    } catch (err) {
+      return res.status(400).json({ Mensagge: 'Project Store Failed' });
+    }
+  }
+
+  public async update(req: Request & TReq, res: Response): Promise<Response> {
+    try {
+      const { title, description, tasks } = req.body;
+
+      const project = await Project.findByIdAndUpdate(
+        req.params.projectId,
+        {
+          title,
+          description
+        },
+        { new: true }
+      );
+
+      project.tasks = [];
+      await Task.deleteOne({ project: project._id });
+
+      await Promise.all(
+        tasks.map(async (task: ITask) => {
+          const projectTask = new Task({ ...task, project: project._id }); // or Task.create({...})
+
+          await projectTask.save();
+
+          project.tasks.push(projectTask);
+        })
+      );
+
+      await project.save();
+
+      return res.json({ project });
+    } catch (err) {
+      return res.status(400).json({ Mensagge: 'Project Update Failed' });
+    }
+  }
+
+  public async destroy(req: Request & TReq, res: Response): Promise<Response> {
+    try {
+      await Project.findByIdAndRemove(req.params.projectId);
+
+      return res.send();
+    } catch (err) {
+      return res.status(400).json({ Mensagge: 'Project Destroy Failed' });
+    }
+  }
 }
 
 export default new ProjectController();

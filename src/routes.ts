@@ -1,21 +1,24 @@
 import { Router } from 'express';
 
 import UserController from './controllers/UserController';
-import AuthenticateController from './controllers/AuthenticateController';
 import ProjectController from './controllers/ProjectController';
 import authMiddleware from './middlewares/auth';
 
 const routes = Router();
 
-// routes.get('/users', UserController.index);
-routes.post('/users', UserController.store);
-
-routes.post('/authenticate', AuthenticateController.auth);
-
-routes.post('/forgotPassword', AuthenticateController.forgotPassword);
-
-routes.post('/resetPassword', AuthenticateController.resetPassword);
+routes.post('/users', UserController.create);
+routes.post('/authenticate', UserController.auth);
+routes.post('/forgotPassword', UserController.forgotPassword);
+routes.post('/resetPassword', UserController.resetPassword);
 
 routes.get('/projects', authMiddleware, ProjectController.index);
+routes.get('/projects/:projectId', authMiddleware, ProjectController.show);
+routes.post('/projects', authMiddleware, ProjectController.store);
+routes.put('/projects/:projectId', authMiddleware, ProjectController.update);
+routes.delete(
+  '/projects/:projectId',
+  authMiddleware,
+  ProjectController.destroy
+);
 
 export default routes;

@@ -24,7 +24,7 @@ module.exports = {
       {
         anonymous: 'always',
         named: 'never',
-        asyncArrow: 'never'
+        asyncArrow: 'always'
       }
     ],
     semi: [2, 'always']

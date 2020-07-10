@@ -2,7 +2,7 @@ import { Response, Request, NextFunction } from 'express';
 import jwt, { VerifyErrors } from 'jsonwebtoken';
 
 import authConfig from '../config/auth.json';
-import { TReq, TDecoded } from '../types/auth';
+import { TReq, TDecoded } from '../types/user';
 
 export default function (
   req: Request & TReq,
