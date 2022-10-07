@@ -32,7 +32,7 @@ export default function (
     authConfig.secret,
     (
       err: VerifyErrors | null,
-      decoded: Record<string, unknown> | undefined | TDecoded
+      decoded: object | undefined | TDecoded
     ): void => {
       if (err) {
         return res.status(401).json({ Error: 'Token invalid' });
